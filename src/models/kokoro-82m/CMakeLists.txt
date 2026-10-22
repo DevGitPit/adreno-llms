@@ -253,6 +253,25 @@ set(SOURCES
     ${THIRD_PARTY_SOURCES}
 )
 
+set(SOURCES_LIB ${SOURCES})
+list(REMOVE_ITEM SOURCES "${CMAKE_SOURCE_DIR}/src/jni_bridge.cpp")
+list(REMOVE_ITEM SOURCES_LIB "${CMAKE_SOURCE_DIR}/src/main.cpp")
+
+# JNI shared library for Android app
+add_library(kokoros_android SHARED ${SOURCES_LIB})
+target_include_directories(kokoros_android PRIVATE
+    src/
+    src/layers/
+    src/submodels/
+    src/third_party/
+)
+target_link_libraries(kokoros_android ${BACKEND_LIBRARIES} log espeak-ng)
+target_compile_definitions(kokoros_android PRIVATE NNOPT_TTS_STREAMING=1)
+target_link_options(kokoros_android PRIVATE
+    "-Wl,--allow-shlib-undefined"
+    "-Wl,-rpath,/vendor/lib64:/vendor/lib:/system/lib64:/system/lib"
+)
+
 # Main inference binary
 add_executable(Kokoro_82M_inference ${SOURCES})
 target_include_directories(Kokoro_82M_inference PRIVATE

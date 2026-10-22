@@ -1,5 +1,7 @@
 # Build artifacts
 build/
+build_native/
+**/build_native/
 build_tests/
 *.o
 *.a
